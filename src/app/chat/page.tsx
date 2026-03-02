@@ -18,11 +18,18 @@ import {
   ConversationContent,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
+import { toast } from "sonner";
 import { Loader } from "@/components/ai-elements/loader";
 
 export default function RagChatBot() {
   const [input, setInput] = useState("");
-  const { messages, sendMessage, status } = useChat();
+  const { messages, sendMessage, status, error } = useChat({
+    onError: (err) => {
+      toast.error(
+        err?.message || "OpenAI API key is missing. Please set OPENAI_API_KEY.",
+      );
+    },
+  });
 
   const handleSubmit = (message: PromptInputMessage) => {
     if (!message.text) return;
