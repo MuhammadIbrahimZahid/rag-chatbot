@@ -1,0 +1,78 @@
+📄 1. Project Summary — What We Did
+
+Project: RAG Chatbot UI with Free AI Integration
+Tech Stack: Next.js 16.x, TypeScript, React 19.x, OpenRouter, Vercel deployment
+
+🛠 Initial Setup
+
+Created a RAG chatbot UI using Next.js + TypeScript
+
+Installed AI SDK and UI components for streaming chat UI using @ai-sdk/react and related elements
+
+🔑 API Key Integration
+
+Originally used @ai-sdk/openai and OpenAI API key
+
+Switched to OpenRouter to use free/inexpensive models for the demo
+
+Stored credentials in .env.local:
+
+OPENAI_API_KEY=...
+OPENROUTER_API_KEY=...
+
+Updated API route (src/app/api/chat/route.ts) to use:
+
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
+const openrouter = createOpenRouter({ apiKey: process.env.OPENROUTER_API_KEY! });
+
+This ensures no reliance on paid OpenAI keys in production.
+
+💡 UI Enhancements
+
+Added a message banner above the chat input to note that this uses free AI with limitations, setting user expectations
+
+Updated chat UI (/chat/page.tsx) to show streaming responses and a human‑friendly interface
+
+⚠ Fixing Deployment Issues
+
+Encountered dependency resolution/build errors on Vercel because of strict peer dependencies with React 19.x
+
+Added a .npmrc file with:
+
+legacy-peer-deps=true
+
+to tell npm to ignore strict peer conflicts on deployment
+
+Also set both OPENAI_API_KEY and OPENROUTER_API_KEY in Vercel’s environment, since some AI SDK code still checks for OpenAI env.
+
+🔧 TypeScript Runtime Fixes
+
+Build failed due to unmatched tool UI states (approval-requested, etc.)
+
+Patched src/components/ai-elements/tool.tsx to include all possible tool states and corresponding icons/labels — this satisfies TypeScript and builds successfully.
+
+🧹 Dependency Cleanup
+
+Removed unused package @ai-sdk/openai
+
+Performed clean reinstall with:
+
+npm install --legacy-peer-deps
+
+Ensured the project builds both in dev and production modes
+
+🚀 Deployment
+
+Verified deployment on Vercel
+
+Ensured environment variables were set correctly
+
+Triggered production build, validated no missing keys or TypeScript errors
+
+🧠 Next Steps (Optional Improvements)
+
+Implement local testing suite (unit tests/E2E tests)
+
+Add automated type‑checking in CI
+
+Add screenshot, live demo links to the README section
