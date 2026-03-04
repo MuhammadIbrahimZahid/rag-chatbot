@@ -1,25 +1,26 @@
+import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { streamText, UIMessage, convertToModelMessages } from "ai";
-import { openai } from "@ai-sdk/openai";
+
+const openrouter = createOpenRouter({
+  apiKey: process.env.OPENROUTER_API_KEY!,
+});
 
 export async function POST(req: Request) {
   try {
     const { messages }: { messages: UIMessage[] } = await req.json();
 
+    // ⚠ MUST await this!
+    const modelMessages = await convertToModelMessages(messages);
+
     const result = await streamText({
-      model: openai("gpt-4o-mini"),
-      messages: convertToModelMessages(messages),
+      model: openrouter("openrouter/free"),
+      messages: modelMessages,
     });
 
     return result.toUIMessageStreamResponse();
   } catch (error: any) {
-    console.error("Error streaming chat completion: ", error);
-
-    // Detect missing API key error
-    const message = error?.message?.includes("API key")
-      ? "OpenAI API key is missing. Please set OPENAI_API_KEY in your environment variables."
-      : "Failed to stream chat completion.";
-
-    return new Response(JSON.stringify({ error: message }), {
+    console.error("Error streaming chat:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
       status: 500,
       headers: { "Content-Type": "application/json" },
     });
