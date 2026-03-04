@@ -25,9 +25,7 @@ export default function RagChatBot() {
   const [input, setInput] = useState("");
   const { messages, sendMessage, status, error } = useChat({
     onError: (err) => {
-      toast.error(
-        err?.message || "OpenAI API key is missing. Please set OPENAI_API_KEY.",
-      );
+      toast.error(err?.message || "Something went wrong with the chat.");
     },
   });
 
@@ -67,7 +65,14 @@ export default function RagChatBot() {
           <ConversationScrollButton />
         </Conversation>
 
-        <PromptInput className="mt-4" onSubmit={handleSubmit}>
+        {/* ——— Free Tier Notice ——— */}
+        <div className="bg-yellow-100 text-yellow-800 border border-yellow-300 rounded p-3 mb-2 text-sm">
+          💡 <strong>Free AI Version Notice:</strong> This chatbot uses a free
+          AI model. Responses may be shorter or slower than production APIs —
+          try simple or brief prompts for best results.
+        </div>
+
+        <PromptInput className="mt-2" onSubmit={handleSubmit}>
           <PromptInputBody>
             <PromptInputTextarea
               value={input}
@@ -76,7 +81,7 @@ export default function RagChatBot() {
           </PromptInputBody>
           <PromptInputToolbar>
             <PromptInputTools>
-              {/* Model Selector, Web Search etc  */}
+              {/* Model Selector, Web Search etc */}
             </PromptInputTools>
             <PromptInputSubmit />
           </PromptInputToolbar>
